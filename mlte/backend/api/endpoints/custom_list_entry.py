@@ -1,7 +1,7 @@
 """
 mlte/backend/api/endpoints/custom_list.py
 
-Custom List Entry CRUD endpoints.
+Custom list Entry CRUD endpoints.
 """
 
 from fastapi import APIRouter, HTTPException
@@ -52,7 +52,7 @@ def read_custom_list_entry(
     current_user: AuthorizedUser,
 ) -> CustomListEntryModel:
     """
-    Read a Custom List Entry.
+    Read a custom list Entry.
     :param entry_id: The entry id to read
     :return: The read entry
     """
@@ -102,7 +102,7 @@ def delete_custom_list_entry(
     current_user: AuthorizedUser,
 ) -> CustomListEntryModel:
     """
-    Delete a Custom List Entry.
+    Delete a custom list Entry.
     :param entry_id: The entry id to delete
     :return: The deleted entry
     """

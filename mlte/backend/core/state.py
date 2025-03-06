@@ -96,7 +96,7 @@ class State:
     def custom_list_store(self) -> CustomListStore:
         """Get the globablly-configured backend custom list store."""
         if self._custom_list_store is None:
-            raise RuntimeError("Custom List store is not configured.")
+            raise RuntimeError("Custom list store is not configured.")
         return self._custom_list_store
 
 
