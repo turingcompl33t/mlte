@@ -27,12 +27,12 @@ class CustomListNameDict(dict[Any, Any]):
         if isinstance(key, CustomListName) and isinstance(
             value, CustomListName
         ):
-            super().__setitem__(key, value)
+            super().__setitem__(key.value, value.value)
         else:
             raise KeyError(f"CustomListName {key} or {value} is not valid.")
 
     def __getitem__(self, key):
-        if isinstance(key, CustomListName):
+        if key in CustomListName._value2member_map_:
             return super().__getitem__(key)
         else:
             raise KeyError(f"CustomListName {key} is not valid.")

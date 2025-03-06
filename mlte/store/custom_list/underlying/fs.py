@@ -9,8 +9,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List, Optional
 
-from mlte.custom_list.custom_list_names import CustomListName
+from mlte.custom_list.custom_list_names import CustomListName, CustomListParentMappings
 from mlte.custom_list.model import CustomListEntryModel
+import mlte.store.error as errors
 from mlte.store.base import StoreURI
 from mlte.store.common.fs_storage import FileSystemStorage
 from mlte.store.custom_list.store import CustomListStore
@@ -82,6 +83,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         entry: CustomListEntryModel,
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
+        self._ensure_parent_exists(entry.parent, list_name)
         self._set_base_path(list_name)
         self.storage.ensure_resource_does_not_exist(entry.name)
         return self._write_entry(entry)
@@ -91,6 +93,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         entry: CustomListEntryModel,
         list_name: Optional[CustomListName] = None,
     ) -> CustomListEntryModel:
+        self._ensure_parent_exists(entry.parent, list_name)
         self._set_base_path(list_name)
         self.storage.ensure_resource_exists(entry.name)
         return self._write_entry(entry)
@@ -111,6 +114,15 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         self._set_base_path(list_name)
         self.storage.ensure_resource_exists(entry_name)
         entry = self._read_entry(entry_name)
+
+        if list_name in CustomListParentMappings.parent_mappings.values():
+            child_list_name = list(CustomListParentMappings.parent_mappings.keys())[list(CustomListParentMappings.parent_mappings.values()).index(list_name)]
+            for child_entry_name in self.list(child_list_name):
+                child_entry = self.read(child_entry_name, child_list_name)
+                if child_entry.parent == entry_name:
+                    self.delete(child_entry_name, child_list_name)
+
+        self._set_base_path(list_name)
         self.storage.delete_resource(entry_name)
         return entry
 
@@ -131,9 +143,16 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         This method sets the base path of the mapper to the path of the list given as a param.
         This has to happen before each request to ensure that the operation happens on the correct list.
         """
-        if CustomListName is not None:
+        if list_name is None or list_name not in CustomListName._value2member_map_:
+            raise errors.ErrorNotFound(f"CustomListName, {list_name}, does not exist or is None.")
+        else:
             self.storage.set_base_path(
                 Path(self.storage.sub_folder, str(list_name))
             )
-        else:
-            raise ValueError("CustomListName cannot be None")
+
+    def _ensure_parent_exists(self, parent: str, list_name: CustomListName) -> None:
+        if list_name in CustomListParentMappings.parent_mappings.keys():
+            if parent not in self.list(CustomListParentMappings.parent_mappings[list_name]):
+                raise errors.ErrorNotFound(f"Parent {parent} does not exist in list {list_name}")
+        elif parent != "":
+            raise errors.InternalError(f"Parent specified for item in list with no parent list.")

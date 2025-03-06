@@ -145,8 +145,8 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
     ) -> CustomListName:
         """Checks if the custom lists exists within the store."""
         if list_name is None or list_name not in self.storage.custom_lists:
-            raise ValueError(
-                f"CustomListName, {list_name}, does not exist or is None"
+            raise errors.ErrorNotFound(
+                f"CustomListName, {list_name}, does not exist or is None."
             )
         else:
             return list_name

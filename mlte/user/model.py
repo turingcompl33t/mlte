@@ -154,6 +154,9 @@ class ResourceType(StrEnum):
     CATALOG = "catalog"
     """Test catalogs."""
 
+    CUSTOM_LIST = "custom_list"
+    """Custom lists."""
+
     @staticmethod
     def get_type_from_url(url: str) -> Optional[ResourceType]:
         """Returns the resource type for the given URL."""

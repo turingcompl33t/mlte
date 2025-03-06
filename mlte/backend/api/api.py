@@ -14,6 +14,7 @@ from mlte.backend.api.endpoints import (
     health,
     token,
     user,
+    custom_list_entry
 )
 from mlte.user.model import ResourceType
 
@@ -44,4 +45,8 @@ api_router.include_router(
     artifact.router,
     prefix=f"{_ARTIFACT_PREFIX}/artifact",
     tags=["artifact"],
+)
+api_router.include_router(
+    custom_list_entry.router,
+    prefix=f"/{ResourceType.CUSTOM_LIST.value}", tags=["custom_list_entry"]
 )
