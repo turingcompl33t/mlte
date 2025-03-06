@@ -92,6 +92,13 @@ class State:
             raise RuntimeError("Token key has not been configured.")
         return self._jwt_secret_key
 
+    @property
+    def custom_list_store(self) -> CustomListStore:
+        """Get the globablly-configured backend custom list store."""
+        if self._custom_list_store is None:
+            raise RuntimeError("Custom List store is not configured.")
+        return self._custom_list_store
+
 
 # Globally-accessible application state
 state = State()

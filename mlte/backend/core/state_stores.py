@@ -10,8 +10,8 @@ from typing import Generator
 from mlte.backend.core.state import state
 from mlte.store.artifact.store import ArtifactStoreSession
 from mlte.store.catalog.catalog_group import CatalogStoreGroupSession
-from mlte.store.user.store_session import UserStoreSession
 from mlte.store.custom_list.store_session import CustomListStoreSession
+from mlte.store.user.store_session import UserStoreSession
 
 
 @contextmanager
@@ -52,13 +52,16 @@ def catalog_stores_session() -> Generator[CatalogStoreGroupSession, None, None]:
     finally:
         session.close()
 
+
 @contextmanager
-def custom_list_stores_session() -> Generator[CustomListStoreSession, None, None]:
+def custom_list_stores_session() -> (
+    Generator[CustomListStoreSession, None, None]
+):
     """
     Get a handle to underlying store session.
     :return: The session handle
     """
-    session: CustomListStoreSession = state._custom_list_store.session()
+    session: CustomListStoreSession = state.custom_list_store.session()
     try:
         yield session
     finally:
