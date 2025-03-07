@@ -24,6 +24,7 @@ from mlte.user.model import BasicUser, User, UserWithPassword
 from test.backend.fixture import user_generator
 from test.store.artifact import artifact_store_creators
 from test.store.catalog import catalog_store_creators
+from test.store.custom_list import custom_list_store_creators
 
 TEST_JWT_TOKEN_SECRET = "asdahsjh23423974hdasd"
 """JWT token secret used for signing tokens."""
@@ -98,6 +99,7 @@ class TestAPI:
             state.add_catalog_store(
                 catalog_store_creators.create_memory_store(), default_catalog_id
             )
+        state.set_custom_list_store(custom_list_store_creators.create_memory_store())
         state.set_token_key(TEST_JWT_TOKEN_SECRET)
 
         # Set user to interact with API, and admin user.

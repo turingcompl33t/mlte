@@ -23,7 +23,7 @@ from test.store.custom_list.custom_list_store_creators import (
 DEFAULT_LIST_NAME = CustomListName.QA_CATEGORIES
 DEFAULT_ENTRY_NAME = "test entry"
 DEFAULT_ENTRY_DESCRIPTION = "test description"
-DEFAULT_PARENT = "test parent"
+DEFAULT_PARENT = ""
 
 
 def custom_list_stores() -> Generator[str, None, None]:
