@@ -91,16 +91,6 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         self.storage.ensure_resource_does_not_exist(entry.name)
         return self._write_entry(entry)
 
-    def edit(
-        self,
-        entry: CustomListEntryModel,
-        list_name: Optional[CustomListName] = None,
-    ) -> CustomListEntryModel:
-        self._ensure_parent_exists(entry.parent, list_name)
-        self._set_base_path(list_name)
-        self.storage.ensure_resource_exists(entry.name)
-        return self._write_entry(entry)
-
     def read(
         self, entry_name: str, list_name: Optional[CustomListName] = None
     ) -> CustomListEntryModel:
@@ -110,6 +100,16 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
     def list(self, list_name: Optional[CustomListName] = None) -> List[str]:
         self._set_base_path(list_name)
         return self.storage.list_resources()
+    
+    def edit(
+        self,
+        entry: CustomListEntryModel,
+        list_name: Optional[CustomListName] = None,
+    ) -> CustomListEntryModel:
+        self._ensure_parent_exists(entry.parent, list_name)
+        self._set_base_path(list_name)
+        self.storage.ensure_resource_exists(entry.name)
+        return self._write_entry(entry)
 
     def delete(
         self, entry_name: str, list_name: Optional[CustomListName] = None
@@ -147,7 +147,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
 
     def _set_base_path(self, list_name: Optional[CustomListName]) -> None:
         """
-        Sets the path to the list specified in the param.
+        Sets the path to the list specified in the param and checks list exists.
 
         This method sets the base path of the mapper to the path of the list given as a param.
         This has to happen before each request to ensure that the operation happens on the correct list.
