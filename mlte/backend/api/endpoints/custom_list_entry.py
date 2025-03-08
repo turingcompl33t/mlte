@@ -6,6 +6,8 @@ Custom list Entry CRUD endpoints.
 
 from fastapi import APIRouter, HTTPException
 
+from typing import List
+
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 from mlte.backend.api.auth.authorization import AuthorizedUser
@@ -70,6 +72,32 @@ def read_custom_list_entry(
         except Exception as e:
             raise_http_internal_error(e)
 
+@router.get("s")
+def list_custom_lists(
+    *,
+    current_user: AuthorizedUser,
+) -> List[str]:
+    """
+    List MLTE custom lists.
+    :return: A collection of list names
+    """
+    return [list_name.value for list_name in CustomListName]
+
+@router.get("/{custom_list_id}")
+def list_custom_list_details(
+    *,
+    custom_list_id: CustomListName,
+    current_user: AuthorizedUser,
+) -> List[CustomListEntryModel]:
+    """
+    List MLTE custom list, with details for each entry in list.
+    :return: A collection of custom list entries with their details.
+    """
+    with state_stores.custom_list_stores_session() as custom_list_store:
+        try:
+            return custom_list_store.custom_list_entry_mapper.list_details(custom_list_id)
+        except Exception as e:
+            raise_http_internal_error(e)
 
 @router.put("/{custom_list_id}/entry")
 def edit_custom_list_entry(
